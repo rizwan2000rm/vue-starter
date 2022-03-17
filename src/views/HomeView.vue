@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import TheWelcome from "@/components/TheWelcome.vue";
+import { useCounterStore } from "@/stores/counter";
+import Counter from "../components/Counter.vue";
+const counter = useCounterStore();
+
+const onClickHandler = () => {
+  counter.increment();
+};
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <Counter :onClickHandler="onClickHandler" :count="counter.count" />
   </main>
 </template>
