@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive, onMounted } from "vue";
 
 import { useTodoStore } from "@/stores/todo";
 import Todo from "../components/Todo.vue";
+import { getAllTodos } from "../services/index";
+
+export interface TodoType {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export interface TodoObject {
+  todos: TodoType[];
+}
 
 const todoStore = useTodoStore();
 const todoInput = ref("");
+let abc: TodoObject = reactive({ todos: [] });
 
 const handleChange = (e: Event) => {
   todoInput.value = (e.target as HTMLInputElement).value;
@@ -17,6 +30,13 @@ const handleClick = () => {
     todoInput.value = "";
   }
 };
+
+onMounted(async () => {
+  const todos = await getAllTodos();
+  abc.todos = todos.filter((todo, index) => {
+    return index < 3;
+  });
+});
 </script>
 
 <template>
@@ -33,6 +53,11 @@ const handleClick = () => {
         <button class="button" @click="handleClick">Add</button>
       </div>
       <Todo />
+      <ul>
+        <li class="todo" v-for="(todo, index) in abc.todos" :key="index">
+          <span :v-if="index < 2"> {{ todo.title }} </span>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
